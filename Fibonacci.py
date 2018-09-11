@@ -1,7 +1,7 @@
 import time
 import random
 
-#반복적 피보나치 수
+#반복적 피보나치 수열
 
 def iterfibo(n):
     if n <= 1:
