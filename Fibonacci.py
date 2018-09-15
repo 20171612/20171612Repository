@@ -8,7 +8,6 @@ def iterfibo(n):
         return n
     fiboF = 0
     fiboL = 1
-    fibo = 0
     for i in range(n - 1):
         fibo = fiboF + fiboL
         fiboF = fiboL
