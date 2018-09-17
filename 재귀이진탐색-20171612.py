@@ -40,7 +40,7 @@ ts = time.time()
 # binary search - recursive
 cnt = 0
 for target in targets:
-    idx = recbinsearch(numbers, 0, len(numbers), target)
+    idx = recbinsearch(numbers, 0, len(numbers)-1, target)
     if idx == -1:
         cnt += 1
 ts = time.time() - ts
