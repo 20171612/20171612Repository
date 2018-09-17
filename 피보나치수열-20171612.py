@@ -6,13 +6,11 @@ import random
 def iterfibo(n):
     if n <= 1:
         return n
-    fiboF = 0
+    fiboF = 1
     fiboL = 1
     for i in range(n - 1):
-        fibo = fiboF + fiboL
-        fiboF = fiboL
-        fiboL = fibo
-    return fibo
+        fiboF,fiboL = (fiboL,fiboF+fiboL)
+    return fiboF
 
 
 fibo = 1
