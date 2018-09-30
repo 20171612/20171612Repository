@@ -26,9 +26,9 @@ numofnbrs = int(input("Enter a number: "))
 numbers = []
 for i in range(numofnbrs):
     numbers += [random.randint(0, 999999)]
-
 numbers = sorted(numbers)
-
+numbers[0] = 0
+numbers[-1] = 999999
 numoftargets = int(input("Enter the number of targets: "))
 targets = []
 for i in range(numoftargets):
@@ -40,7 +40,7 @@ ts = time.time()
 # binary search - recursive
 cnt = 0
 for target in targets:
-    idx = recbinsearch(numbers, 0, len(numbers), target)
+    idx = recbinsearch(numbers, 0, len(numbers)-1, target)
     if idx == -1:
         cnt += 1
 ts = time.time() - ts
