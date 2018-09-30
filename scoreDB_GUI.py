@@ -65,7 +65,6 @@ class ScoreDB(QWidget):
         self.delkey.clicked.connect(self.delkey_clicked)
         self.findkey.clicked.connect(self.findkey_clicked)
         self.inckey.clicked.connect(self.inckey_clicked)
-
         hbox5 = QHBoxLayout()
         self.text = QTextEdit()
         hbox5.addWidget(self.text)
@@ -83,12 +82,12 @@ class ScoreDB(QWidget):
 
     def readScoreDB(self):
         try:
-            fH = open(self.dbfilename, 'rb')
+            fH = open(self.dbfilename, 'r')
         except FileNotFoundError as e:
             self.scoredb = []
             return
         try:
-            self.scoredb =  pickle.load(fH)
+            self.scoredb =  []
         except:
             pass
         else:
@@ -107,13 +106,13 @@ class ScoreDB(QWidget):
 
     # write the data into person db
     def writeScoreDB(self):
-        fH = open(self.dbfilename, 'wb')
+        fH = open(self.dbfilename, 'w')
         for p in self.scoredb:
             pinfo = []
             for attr in p:
                 pinfo += [attr + ":" + p[attr]]
             line = ','.join(pinfo)
-            pickle.dump(line + '\n', fH)
+            fH.write(line + '\n')
         fH.close()
         return
 
@@ -155,3 +154,4 @@ if __name__ == '__main__':
     ex = ScoreDB()
     ex.readScoreDB()
     sys.exit(app.exec_())
+    ex.writeScoreDB()
