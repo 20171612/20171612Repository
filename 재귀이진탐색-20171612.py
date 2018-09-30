@@ -13,22 +13,21 @@ def recbinsearch(L, l, u, target):
     if l > u:
         return -1
     else:
-        middle = (l + u)//2
-        if target == L[middle]:
-            return L[middle]
-        elif target < L[middle]:
-            return recbinsearch(L,l,middle-1,target)
+        m = (l + u)//2
+        if target == L[m]:
+            return L[m]
+        elif target < L[m]:
+            return recbinsearch(L,l,m-1,target)
         else:
-            return recbinsearch(L,middle+1,u,target)
+            return recbinsearch(L,m+1,u,target)
 
 
 numofnbrs = int(input("Enter a number: "))
 numbers = []
 for i in range(numofnbrs):
     numbers += [random.randint(0, 999999)]
+
 numbers = sorted(numbers)
-numbers[0] = 0
-numbers[-1] = 999999
 numoftargets = int(input("Enter the number of targets: "))
 targets = []
 for i in range(numoftargets):
@@ -40,7 +39,7 @@ ts = time.time()
 # binary search - recursive
 cnt = 0
 for target in targets:
-    idx = recbinsearch(numbers, 0, len(numbers)-1, target)
+    idx = recbinsearch(numbers, 0, len(numbers), target)
     if idx == -1:
         cnt += 1
 ts = time.time() - ts
