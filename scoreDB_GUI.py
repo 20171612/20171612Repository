@@ -82,12 +82,19 @@ class ScoreDB(QWidget):
 
     def readScoreDB(self):
         try:
-            fH = open(self.dbfilename, 'r')
+            BfH = open(self.dbfilename,'rb')
         except FileNotFoundError as e:
             self.scoredb = []
             return
         try:
             self.scoredb =  []
+            fH = []
+            while True:
+                try:
+                    data = pickle.load(BfH)
+                except EOFError:
+                    break
+                fH.append(data)
         except:
             pass
         else:
@@ -100,19 +107,19 @@ class ScoreDB(QWidget):
                 kv = attr.split(":")
                 record[kv[0]] = kv[1]
             self.scoredb += [record]
-        fH.close()
+        BfH.close()
         return self.scoredb
 
 
     # write the data into person db
     def writeScoreDB(self):
-        fH = open(self.dbfilename, 'w')
+        fH = open(self.dbfilename, 'wb')
         for p in self.scoredb:
             pinfo = []
             for attr in p:
                 pinfo += [attr + ":" + p[attr]]
             line = ','.join(pinfo)
-            fH.write(line + '\n')
+            pickle.dump(line + '\n',fH)
         fH.close()
         return
 
@@ -154,4 +161,3 @@ if __name__ == '__main__':
     ex = ScoreDB()
     ex.readScoreDB()
     sys.exit(app.exec_())
-    ex.writeScoreDB()
