@@ -12,14 +12,6 @@ def iterfibo(n):
         fiboF,fiboL = (fiboL,fiboF+fiboL)
     return fiboF
 
-
-fibo = 1
-fiboF = 1
-fiboL = 1
-
-fibo = 3
-
-
 def fibo(n):
     if n <= 1:
         return n
