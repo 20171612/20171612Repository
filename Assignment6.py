@@ -1,7 +1,8 @@
 import pickle
 import sys
-from PyQt5.QtWidgets import *
-
+from PyQt5.QtWidgets import (QWidget, QPushButton,
+    QHBoxLayout, QVBoxLayout, QApplication, QLabel,
+    QComboBox, QTextEdit, QLineEdit)
 
 class ScoreDB(QWidget):
 
@@ -22,12 +23,9 @@ class ScoreDB(QWidget):
         self.ageline = QLineEdit()
         score = QLabel('Score:')
         self.scoreline = QLineEdit()
-        hbox1.addWidget(name)
-        hbox1.addWidget(self.nameline)
-        hbox1.addWidget(age)
-        hbox1.addWidget(self.ageline)
-        hbox1.addWidget(score)
-        hbox1.addWidget(self.scoreline)
+        hbox1list = [name,self.nameline,age,self.ageline,score,self.scoreline]
+        for i in hbox1list:
+            hbox1.addWidget(i)
         vbox.addLayout(hbox1)
 
         hbox2 = QHBoxLayout()
@@ -36,11 +34,10 @@ class ScoreDB(QWidget):
         self.amountline = QLineEdit()
         self.keycombo = QComboBox()
         self.keycombo.addItems(['Age','Name','Score'])
+        hbox2list = [amount,self.amountline,key,self.keycombo]
         hbox2.addStretch(1)
-        hbox2.addWidget(amount)
-        hbox2.addWidget(self.amountline)
-        hbox2.addWidget(key)
-        hbox2.addWidget(self.keycombo)
+        for i in hbox2list:
+            hbox2.addWidget(i)
         vbox.addLayout(hbox2)
 
         self.addkey = QPushButton('Add')
@@ -48,16 +45,19 @@ class ScoreDB(QWidget):
         self.findkey = QPushButton('Find')
         self.inckey = QPushButton('Inc')
         self.showkey = QPushButton('Show')
-        keylist = [self.addkey, self.delkey, self.findkey, self.inckey, self.showkey]
+        hbox3list = [self.addkey, self.delkey, self.findkey, self.inckey, self.showkey]
         hbox3 = QHBoxLayout()
         hbox3.addStretch(1)
-        for i in keylist:
+        for i in hbox3list:
             hbox3.addWidget(i)
         vbox.addLayout(hbox3)
 
         hbox4 = QHBoxLayout()
         result = QLabel('Result:')
+        self.errortext = QLabel('')
         hbox4.addWidget(result)
+        hbox4.addStretch(1)
+        hbox4.addWidget(self.errortext)
         vbox.addLayout(hbox4)
 
         self.addkey.clicked.connect(self.addkey_clicked)
@@ -83,24 +83,24 @@ class ScoreDB(QWidget):
 
     def readScoreDB(self):
         try:
-            bfH = open(self.dbfilename, 'rb')
+            fH = open(self.dbfilename, 'rb')
         except FileNotFoundError as e:
             self.scoredb = []
             return
         try:
             self.scoredb =  []
-            fH = []
+            db = []
             while True:
                 try:
-                    data = pickle.load(bfH)
+                    data = pickle.load(fH)
                 except EOFError:
                     break
-                fH.append(data)
+                db.append(data)
         except:
             pass
         else:
             pass
-        for line in fH:
+        for line in db:
             dat = line.strip()
             person = dat.split(",")
             record = {}
@@ -108,7 +108,7 @@ class ScoreDB(QWidget):
                 kv = attr.split(":")
                 record[kv[0]] = kv[1]
             self.scoredb += [record]
-        bfH.close()
+        fH.close()
         return self.scoredb
 
 
@@ -122,33 +122,62 @@ class ScoreDB(QWidget):
             line = ','.join(pinfo)
             pickle.dump(line + '\n', fH)
         fH.close()
-        return
 
     def addkey_clicked(self):
-        record = {'Age':self.ageline.text() ,'Name': self.nameline.text(), 'Score': self.scoreline.text()}
-        self.scoredb += [record]
+        try:
+            int(self.ageline.text())
+            int(self.scoreline.text())
+            if self.nameline.text() != '':
+                record = {'Age':self.ageline.text() ,'Name': self.nameline.text(), 'Score': self.scoreline.text()}
+                self.scoredb += [record]
+                self.showkey_clicked()
+                self.errortext.clear()
+            else:
+                self.errortext.setText('Please enter a name to add')
+        except ValueError:
+            self.errortext.setText('Please enter your age and score as an integer')
 
     def delkey_clicked(self):
+        n = 0
         for i in self.scoredb[:]:
             if self.nameline.text() == i['Name']:
                 self.scoredb.remove(i)
-        return
+                n += 1
+        if n == 0:
+            self.errortext.setText("Can't found name to delete")
+        else:
+            self.errortext.clear()
+            self.showkey_clicked()
 
     def findkey_clicked(self):
+        n = 0
         findnames = ''
         for p in self.scoredb[:]:
             if self.nameline.text() == p['Name']:
                 for attr in sorted(p):
                     findnames += (attr + "=" + p[attr] + '       ')
                 findnames += ('\n')
-        self.text.setText(findnames)
-        return
+                n +=1
+        if n == 0:
+            self.errortext.setText("Can't found name")
+        else:
+            self.errortext.clear()
+            self.text.setText(findnames)
 
     def inckey_clicked(self):
-        for i in self.scoredb:
-            if i['Name'] == self.nameline.text():
-                i['Score'] = str(int(i['Score']) + int(self.amountline.text()))
-        return
+        n = 0
+        try:
+            for i in self.scoredb:
+                if i['Name'] == self.nameline.text():
+                    i['Score'] = str(int(i['Score']) + int(self.amountline.text()))
+                    n += 1
+            if n == 0:
+                self.errortext.setText("Can't found name to increase")
+            else:
+                self.errortext.clear()
+                self.showkey_clicked()
+        except ValueError:
+            self.errortext.setText('Enter the amount as integer')
 
     def showkey_clicked(self):
         returntext = ''
@@ -157,6 +186,8 @@ class ScoreDB(QWidget):
                 returntext += (attr + "=" + p[attr]+'       ')
             returntext += ('\n')
         self.text.setText(returntext)
+        self.errortext.clear()
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = ScoreDB()
