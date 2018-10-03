@@ -128,7 +128,7 @@ class ScoreDB(QWidget):
             int(self.ageline.text())
             int(self.scoreline.text())
             if self.nameline.text() != '':
-                record = {'Age':self.ageline.text() ,'Name': self.nameline.text(), 'Score': self.scoreline.text()}
+                record = {'Age':self.ageline.text() ,'Name': self.nameline.text(),'Score': self.scoreline.text()}
                 self.scoredb += [record]
                 self.showkey_clicked()
                 self.errortext.clear()
@@ -183,7 +183,7 @@ class ScoreDB(QWidget):
         returntext = ''
         for p in sorted(self.scoredb, key=lambda person: person[self.keycombo.currentText()]):
             for attr in sorted(p):
-                returntext += (attr + "=" + p[attr]+'       ')
+                returntext += (attr + "=" +p[attr]+'\t')
             returntext += ('\n')
         self.text.setText(returntext)
         self.errortext.clear()
