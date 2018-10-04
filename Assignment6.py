@@ -12,6 +12,8 @@ class ScoreDB(QWidget):
         self.dbfilename = 'assignment6.dat'
         self.scoredb = []
         self.readScoreDB()
+        self.showkey_clicked()
+
     def initUI(self):
 
         vbox = QVBoxLayout()
@@ -76,7 +78,6 @@ class ScoreDB(QWidget):
         self.setGeometry(300, 300, 500, 250)
         self.setWindowTitle('Assignment6')
         self.show()
-        return
 
     def closeEvent(self, event):
         self.writeScoreDB()
@@ -85,10 +86,8 @@ class ScoreDB(QWidget):
         try:
             fH = open(self.dbfilename, 'rb')
         except FileNotFoundError as e:
-            self.scoredb = []
-            return
+            pass
         try:
-            self.scoredb =  []
             db = []
             while True:
                 try:
@@ -109,8 +108,6 @@ class ScoreDB(QWidget):
                 record[kv[0]] = kv[1]
             self.scoredb += [record]
         fH.close()
-        return self.scoredb
-
 
     # write the data into person db
     def writeScoreDB(self):
